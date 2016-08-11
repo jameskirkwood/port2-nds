@@ -11,9 +11,8 @@
 
 typedef enum {
 	APP_IDLE,
-	APP_INIT,
-	APP_PING_ONCE_RESULTS,
-	APP_PING_CONTINUOUS
+	APP_PING,
+	APP_LISTEN
 } App_status_t;
 
 static App_status_t App_status;
@@ -29,6 +28,11 @@ void ping() {
 	ping_usecs = ping_ticks / 33.513982;
 }
 
+void listener(u8 byte) {
+
+	printf("%c", byte);
+}
+
 
 // Public
 //------------------------------------------------------------------------------
@@ -36,44 +40,39 @@ void ping() {
 void App_init() {
 
 	Port2_init();
-	App_status = APP_INIT;
+	App_status = APP_IDLE;
 }
 
 void App_draw() {
 
-	if (App_status == APP_IDLE) return;
-
-	consoleClear();
-	printf(
-		"NDS <-> Arduino interrupt test\n"
-		"A: ping Arduino\n"
-		"B: toggle 60Hz pinging\n\n"
-	);
-
 	switch (App_status) {
 
-		case APP_PING_ONCE_RESULTS:
-		case APP_PING_CONTINUOUS:
+		case APP_IDLE:
+		consoleClear();
+		printf(
+			"A: ping device at 60Hz\n"
+			"B: listen for input from device\n\n"
+		);
+		break;
+
+		case APP_PING:
+		consoleClear();
 		if (ping_ticks == -1) {
 			printf("ping timeout");
 		}
 		else {
 			printf(
 				"   ticks | microseconds\n"
-				"%8d | %12.2f\n\n",
-				ping_ticks, ping_usecs
+				"%8d | %12.2f\n\n"
+				"running avg: %10.2f\n\n"
+				"timeouts:    %10d\n",
+				ping_ticks, ping_usecs,
+				average_usecs, timeouts
 			);
-			if (App_status == APP_PING_CONTINUOUS) {
-				printf(
-					"running avg: %10.2f\n\n"
-					"timeouts:    %10d\n",
-					average_usecs, timeouts
-				);
-			}
 		}
 		break;
 
-		default:
+		case APP_LISTEN:
 		break;
 	}
 }
@@ -85,22 +84,19 @@ void App_frame() {
 		case APP_IDLE:
 		if (keysDown() & KEY_A) {
 			ping();
-			App_status = APP_PING_ONCE_RESULTS;
-		}
-		else if (keysDown() & KEY_B) {
-			ping();
 			average_usecs = ping_usecs;
 			timeouts = 0;
-			App_status = APP_PING_CONTINUOUS;
+			App_status = APP_PING;
+		}
+		else if (keysDown() & KEY_B) {
+			consoleClear();
+			printf("Listening...\n");
+			Port2_listen(&listener);
+			App_status = APP_LISTEN;
 		}
 		break;
 
-		case APP_INIT:
-		case APP_PING_ONCE_RESULTS:
-		App_status = APP_IDLE;
-		break;
-
-		case APP_PING_CONTINUOUS:
+		case APP_PING:
 		ping_ticks = Port2_ping();
 		if (ping_ticks == -1) {
 			timeouts++;
@@ -109,7 +105,14 @@ void App_frame() {
 			ping_usecs = ping_ticks / 33.513982;
 			average_usecs = (average_usecs * 249 + ping_usecs) * 0.004;
 		}
+		if (keysDown() & KEY_A) {
+			App_status = APP_IDLE;
+		}
+		break;
+
+		case APP_LISTEN:
 		if (keysDown() & KEY_B) {
+			Port2_listen(0);
 			App_status = APP_IDLE;
 		}
 		break;
