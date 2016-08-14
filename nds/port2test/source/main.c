@@ -8,6 +8,7 @@ int main() {
 
 	vramDefault();
 	consoleDemoInit();
+	lcdSwap();
 
 	App_init();
 
