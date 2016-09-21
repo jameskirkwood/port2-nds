@@ -16,11 +16,6 @@ static float echo_micros;
 static float average_micros;
 static int timeouts;
 
-void listener(u8 byte) {
-
-	printf("%c", byte);
-}
-
 
 // Public
 //------------------------------------------------------------------------------
