@@ -32,4 +32,3 @@ void loop() {
     DDRB &= 0xf0;
   }
 }
-

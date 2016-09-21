@@ -4,8 +4,6 @@
 #define INT0_PIN 2
 #define SLOT2_IRQ_PIN 3
 
-static int count;
-
 ISR(INT0_vect) {
   PORTD |= 0b00001000; // Turn on pin 3
   PORTD &= 0b11110111; // Turn off pin 3
@@ -19,4 +17,3 @@ void setup() {
 }
 
 void loop() {}
-
