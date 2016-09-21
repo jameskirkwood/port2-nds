@@ -19,7 +19,7 @@ include $(DEVKITARM)/ds_rules
 # ICON is the image used to create the game icon, leave blank to use default rule
 # NITRO is a directory that will be accessible via NitroFS
 #---------------------------------------------------------------------------------
-TARGET   := port2test
+TARGET   := echo_test
 BUILD    := build
 SOURCES  := source
 INCLUDES := include
@@ -33,8 +33,8 @@ ICON     :=
 NITRO    :=
 
 # These set the information text in the nds file
-GAME_TITLE     := Port2 Test
-GAME_SUBTITLE1 := Slot-2 I/O Hack Demo Driver
+GAME_TITLE     := Port2 Echo Test
+GAME_SUBTITLE1 := github.com/jameskirkwood/port2-nds
 GAME_SUBTITLE2 := James Kirkwood
 
 #---------------------------------------------------------------------------------
