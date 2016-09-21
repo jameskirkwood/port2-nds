@@ -3,5 +3,7 @@
 
 # Compiled Source
 *.o
+*.d
+*.map
 *.elf
 *.nds
