@@ -1,5 +1,5 @@
-#include <avr/io.h>
-#include <avr/interrupt.h>
+#import <avr/io.h>
+#import <avr/interrupt.h>
 
 #define INT0_PIN 2
 #define SLOT2_IRQ_PIN 3

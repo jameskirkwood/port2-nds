@@ -1,4 +1,4 @@
-#include <avr/io.h>
+#import <avr/io.h>
 
 #define SLOT2_IRQ_PIN 3
 
